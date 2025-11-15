@@ -72,6 +72,7 @@ class Aggregator(nn.Module):
         init_values=0.01,
         global_merging=True,
         merging=0,
+        merge_ratio=0.9,
         vis_attn_map=False,
     ):
         super().__init__()
@@ -87,6 +88,7 @@ class Aggregator(nn.Module):
         self.position_getter = PositionGetter() if self.rope is not None else None
         self.global_merging = global_merging
         self.merging = merging
+        self.merge_ratio = merge_ratio
         self.vis_attn_map = vis_attn_map
         self.frame_blocks = nn.ModuleList(
             [
@@ -100,6 +102,7 @@ class Aggregator(nn.Module):
                     init_values=init_values,
                     qk_norm=qk_norm,
                     rope=self.rope,
+                    merge_ratio=merge_ratio,
                 )
                 for _ in range(depth)
             ]
@@ -117,6 +120,7 @@ class Aggregator(nn.Module):
                     init_values=init_values,
                     qk_norm=qk_norm,
                     rope=self.rope,
+                    merge_ratio=merge_ratio,
                 )
                 for _ in range(depth)
             ]
