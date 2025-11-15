@@ -134,17 +134,24 @@ def main():
     parser.add_argument(
         "--ckpt_path",
         type=str,
-        default="/home/sy/code/FastVGGT/ckpt/model_tracker_fixed_e20.pt",
+        default="/home/sy/code/vggt_0625/ckpt/model_tracker_fixed_e20.pt",
         help="Model checkpoint file path",
     )
 
     parser.add_argument("--merging", type=int, default=0, help="Merging parameter")
 
+    parser.add_argument(
+        "--merge_ratio",
+        type=float,
+        default=0.9,
+        help="Token merge ratio (0.0-1.0)",
+    )
+
     # Processing parameters
     parser.add_argument(
         "--input_frame",
         type=int,
-        default=200,
+        default=300,
         help="Maximum number of frames to process per scene",
     )
 
@@ -180,7 +187,7 @@ def main():
         return
 
     # Check required subdirectories
-    color_dir = args.data_path / "images"
+    color_dir = args.data_path  # / "images"
     pose_dir = args.data_path / "pose"
 
     if not color_dir.exists():
@@ -220,7 +227,11 @@ def main():
 
     # Load VGGT model
     print(f"🔄 Loading model: {args.ckpt_path}")
-    model = VGGT(merging=args.merging, vis_attn_map=args.vis_attn_map)
+    model = VGGT(
+        merging=args.merging,
+        merge_ratio=args.merge_ratio,
+        vis_attn_map=args.vis_attn_map,
+    )
     ckpt = torch.load(args.ckpt_path, map_location="cpu")
     incompat = model.load_state_dict(ckpt, strict=False)
     # if incompat.missing_keys or incompat.unexpected_keys:
