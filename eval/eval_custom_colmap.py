@@ -237,10 +237,16 @@ def parse_args():
     parser.add_argument(
         "--ckpt_path",
         type=str,
-        default="/home/sy/code/FastVGGT/ckpt/model_tracker_fixed_e20.pt",
+        default="/home/sy/code/vggt_0625/ckpt/model_tracker_fixed_e20.pt",
         help="Model checkpoint file path",
     )
     parser.add_argument("--merging", type=int, default=0, help="Merging parameter")
+    parser.add_argument(
+        "--merge_ratio",
+        type=float,
+        default=0.9,
+        help="Token merge ratio (0.0-1.0)",
+    )
     parser.add_argument(
         "--depth_conf_thresh",
         type=float,
@@ -274,7 +280,7 @@ def main():
     print(f"Using device: {device}")
     print(f"Using dtype: {dtype}")
 
-    images_dir = args.data_path / "images"
+    images_dir = args.data_path  # / "images"
     if not images_dir.exists():
         print(f"❌ images directory not found: {images_dir}")
         return
@@ -288,7 +294,7 @@ def main():
 
     # Load model
     print(f"🔄 Loading model: {args.ckpt_path}")
-    model = VGGT(merging=args.merging, vis_attn_map=False)
+    model = VGGT(merging=args.merging, merge_ratio=args.merge_ratio, vis_attn_map=False)
     ckpt = torch.load(args.ckpt_path, map_location="cpu")
     model.load_state_dict(ckpt, strict=False)
     model = model.cuda().eval()
