@@ -5,7 +5,7 @@ dependencies = [
     # Common dependencies with VGGT (does not specify versions to avoid hard pinning unecessarily)
     "torch",
     "torchvision",
-    "numpy<2",
+    "numpy",
     "Pillow",
     "huggingface_hub",
     "einops",
