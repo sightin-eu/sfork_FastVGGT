@@ -39,6 +39,7 @@ class Attention(nn.Module):
         global_merging=None,
         patch_width: int = 37,
         patch_height: int = 28,
+        merge_ratio: float = 0.9,
     ) -> None:
         super().__init__()
         assert dim % num_heads == 0, "dim should be divisible by num_heads"
@@ -48,6 +49,7 @@ class Attention(nn.Module):
         self.patch_width = patch_width
         self.patch_height = patch_height
         self.fused_attn = fused_attn
+        self.merge_ratio = merge_ratio
 
         self.qkv = nn.Linear(dim, dim * 3, bias=qkv_bias)
         self.q_norm = norm_layer(self.head_dim) if qk_norm else nn.Identity()
@@ -166,8 +168,7 @@ class Attention(nn.Module):
             generator = torch.Generator(device=x.device)
             generator.manual_seed(33)
 
-            merge_ratio = 0.9
-            r = int(x.shape[1] * merge_ratio)
+            r = int(x.shape[1] * self.merge_ratio)
 
             m, u = token_merge_bipartite2d(
                 x,
