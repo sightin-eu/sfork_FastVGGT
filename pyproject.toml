@@ -16,7 +16,7 @@ dependencies = [
     # "lightglue", # conda dep, not in pypi
     # FastVGGT specific
     "evo",
-    "open3d",
+    # "open3d", # fix for sightin 3.13 build pypi not yet and conda dep pixi crash
     "matplotlib",
     "scipy",
     "scikit-image",
